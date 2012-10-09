@@ -18,7 +18,7 @@ Add your all sweepers to autooload in config/application.rb
 #### RSpec test case for sweeper
 		require 'spec_helper'
 		
-		describe CommentSweeper, :wip do
+		describe CommentSweeper do
 			context "#after create" do
 				it "should be called" do
 					photo = FactoryGirl.create(:photo)
