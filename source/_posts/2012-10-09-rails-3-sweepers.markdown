@@ -49,7 +49,7 @@ Add your all sweepers to autooload in config/application.rb
 			private
 			
 				def expire_cache_for(comment)
-					expire_fragement("comment-#{comment.id}")					
+					expire_fragment("comment-#{comment.id}")					
 				end
 		end
 
