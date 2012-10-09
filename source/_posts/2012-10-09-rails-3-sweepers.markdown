@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Rails 3 sweepers"
-date: 2012-10-09 15:34
+date: 2012-10-09 20:14
 comments: true
 categories: [rails 3 sweeper]
 author: Krishna Srihari
@@ -17,21 +17,38 @@ Add your all sweepers to autooload in config/application.rb
     config.autoload_paths += %W(#{config.root}/app/sweepers)
 
 #### RSpec test case for sweeper
-		require 'spec_helper'
-		
-		describe CommentSweeper do
-			context "#after create" do
-				it "should be called" do
-					photo = FactoryGirl.create(:photo)
-					
-					sweeper = CommentSweeper.instance
-					sweeper.should_receive(:after_save)
-					ActiveRecord::Observer.with_observers(:comment_sweeper) do			
-						photo.comments.create(:comment =>  "test")
-					end			
-				end
-			end
+Write test cases for your sweepers 
+  	let(:photo) { FactoryGirl.create(:photo) }
+		let(:sweeper) { CommentSweeper.instance}
+	
+		context "#after save" do
+			it "should be called" do
+				sweeper.should_receive(:after_save)
+				ActiveRecord::Observer.with_observers(:comment_sweeper) do			
+					photo.comments.create(:comment =>  "test")
+				end			
+			end		
 		end
+
+Write test case for caching
+		context "#after save cache" do
+			before do
+				Rails.cache.clear
+				ActionController::Base.perform_caching = true
+				Rails.cache.write("views/photo-#{photo.id}-comments","photo comments content")
+			end
+			after do
+				ActionController::Base.perform_caching = false
+			end
+			
+			it "should be clear cached content " do			
+				ActiveRecord::Observer.with_observers(:comment_sweeper) do			
+					photo.comments.create(:comment =>  "update photo comments content")
+				end
+				Rails.cache.read("views/photo-#{photo.id}-comments").should be_nil
+			end		
+		end
+
 
 <https://github.com/patmaddox/no-peeping-toms> gem required to pass this testcase
 
@@ -47,10 +64,10 @@ Add your all sweepers to autooload in config/application.rb
 				expire_cache_for(comment)
 			end
 			
-			private
-			
+			private			
 				def expire_cache_for(comment)
-					expire_fragment("comment-#{comment.id}")					
+					expire_fragment("comment-#{comment.id}")
+					Rails.cache.delete("views/photo-#{comment.photo.id}-comments")					
 				end
 		end
 
