@@ -5,7 +5,7 @@ date: 2012-10-30 17:27
 comments: true
 categories: [cloudfront streaming, ruby on rails]
 external-url: https://github.com/krishnasrihari/cloudfront-private
-author: Krishna Srihari
+author: Krishnaiah Sriharikota
 ---
 
 Please check below steps to setup amazon cloudfront private content streaming in Ruby on Rails 3

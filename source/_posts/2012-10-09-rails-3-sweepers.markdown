@@ -4,7 +4,7 @@ title: "Rails 3 sweepers"
 date: 2012-10-09 20:14
 comments: true
 categories: [rails 3 sweeper]
-author: Krishna Srihari
+author: Krishnaiah Sriharikota
 ---
 
 Rails 3 sweepers are same as observers but there are small changes for configuration
