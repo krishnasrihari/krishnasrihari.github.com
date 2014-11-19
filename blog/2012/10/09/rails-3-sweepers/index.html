@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Krishnaiah Sriharikota Blogs</title>
+  <title>Rails 3 sweepers - Krishnaiah Sriharikota Blogs</title>
   <meta name="author" content="Krishnaiah Sriharikota">
 
   
-  <meta name="description" content="Please check below steps to setup amazon cloudfront private content streaming in Ruby on Rails 3 Create Amazon s3 bucket to store your private &hellip;">
+  <meta name="description" content="Rails 3 sweepers are same as observers but there are small changes for configuration Create sweeper Directory Create separate directory name &#8216; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://krishnasrihari.github.com/">
+  <link rel="canonical" href="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -62,114 +62,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/10/30/cloudfront-private/">Cloudfront Private Streaming With Ruby on Rails 3</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-10-30T17:27:00+05:30" pubdate data-updated="true">Oct 30<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Please check below steps to setup amazon cloudfront private content streaming in Ruby on Rails 3</p>
-
-<h3>Create Amazon s3 bucket to store your private contents</h3>
-
-<ol>
-<li><p>Go to Amazon Simple storage service(S3)</p></li>
-<li><p>Click &#8216;create bucket&#8217; button, give bucket name and click &#8216;create&#8217;</p></li>
-<li><p>Select bucket, click &#8216;create folder&#8217; on top and give folder name</p></li>
-<li><p>Add your mp4 contents in newly created folder</p></li>
-</ol>
-
-
-<h3>Create private streaming distribution in cloudfront</h3>
-
-<ol>
-<li><p>Go to cloud front console</p></li>
-<li><p>Click &#8216;create distribution&#8217; button</p></li>
-<li><p>Select &#8216;Streaming&#8217; and click &#8216;continue&#8217;</p></li>
-<li><p>Set  below configuration</p>
-
-<ul>
-<li><p>Origin Domain name</p>
-
-<p>  Choose your bucket name in the drop down</pre></p></li>
-<li><p>Restrict Bucket Access</p>
-
-<p>  Select ‘Yes’</p></li>
-<li><p>Origin Access Identity</p>
-
-<p>  Select ‘Create a new identity’  or ‘use an existing identity’ if you already created it</p></li>
-<li><p>Grant Read Permissions on Bucket</p>
-
-<p>  Select ‘Yes, update bucket policy’</p></li>
-<li><p>Restrict Viewer Access (Use signed urls)</p>
-
-<p>  Select ‘yes’</p></li>
-<li><p>Distribution State</p>
-
-<p>  Select ‘Enabled’</p></li>
-</ul>
-</li>
-<li><p>Click ‘create distribution’ and go to cloudfront home page</p></li>
-<li><p>Check the status of your newly created private distribution it shows ‘in progress’, wait until status shows as ‘deployed’, it may take longer time to get deployed</p></li>
-</ol>
-
-
-<h3>Create cloudfront key pairs</h3>
-
-<p>Note: If you already created private key and key pair id skip below steps</p>
-
-<ol>
-<li><p>Sign in to the AWS management console and go to security credential page at  <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials">https://portal.aws.amazon.com/gp/aws/securityCredentials</a>.</p></li>
-<li><p>Under ‘Access credentials’, click the ‘kay pairs’ tab</p></li>
-<li><p>Under ‘Amazon cloudFront key pairs’, click ‘create a new key pair’</p></li>
-<li><p>Save private key and store it in safe place</p></li>
-<li><p>Copy key pair id and paste it somewhere to use it later</p></li>
-</ol>
-
-
-<p>Note: These Key pair id and private key required to access the private streaming distribution</p>
-
-<h3>Access private streaming in Ruby on Rails</h3>
-
-<p>Install <a href="https://github.com/krishnasrihari/cloudfront-private">https://github.com/krishnasrihari/cloudfront-private</a> gem and configure it as described in guide</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/10/09/rails-3-sweepers/">Rails 3 Sweepers</a></h1>
+      <h1 class="entry-title">Rails 3 Sweepers</h1>
     
     
       <p class="meta">
@@ -192,7 +90,7 @@
   </header>
 
 
-  <div class="entry-content"><p>Rails 3 sweepers are same as observers but there are small changes for configuration</p>
+<div class="entry-content"><p>Rails 3 sweepers are same as observers but there are small changes for configuration</p>
 
 <h4>Create sweeper Directory</h4>
 
@@ -281,18 +179,59 @@ end
 
 <p>Execute your sweeper test case, it will execute without any error.</p>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Krishnaiah Sriharikota</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2012-10-09T20:14:00+05:30" pubdate data-updated="true">Oct 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
   
-  <div class="pagination">
+    <a class='category' href='/blog/categories/rails-3-sweeper/'>rails 3 sweeper</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/" data-via="krishnasrihar" data-counturl="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/" >Tweet</a>
+  
+  
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/30/cloudfront-private/" title="Next Post: Cloudfront private streaming with Ruby on Rails 3">Cloudfront private streaming with Ruby on Rails 3 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -313,7 +252,7 @@ end
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/krishnasrihari">@krishnasrihari</a> on GitHub
@@ -343,7 +282,7 @@ end
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -362,6 +301,7 @@ end
 
   
 </aside>
+
 
     </div>
   </div>
