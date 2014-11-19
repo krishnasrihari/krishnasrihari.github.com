@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Krishnaiah Sriharikota Blogs]]></title>
+  <link href="http://krishnasrihari.github.com/atom.xml" rel="self"/>
+  <link href="http://krishnasrihari.github.com/"/>
+  <updated>2014-11-19T14:24:25+05:30</updated>
+  <id>http://krishnasrihari.github.com/</id>
+  <author>
+    <name><![CDATA[Krishnaiah Sriharikota]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cloudfront private streaming with Ruby on Rails 3]]></title>
+    <link href="http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private/"/>
+    <updated>2012-10-30T17:27:00+05:30</updated>
+    <id>http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private</id>
+    <content type="html"><![CDATA[<p>Please check below steps to setup amazon cloudfront private content streaming in Ruby on Rails 3</p>
+
+<h3>Create Amazon s3 bucket to store your private contents</h3>
+
+<ol>
+<li><p>Go to Amazon Simple storage service(S3)</p></li>
+<li><p>Click &#8216;create bucket&#8217; button, give bucket name and click &#8216;create&#8217;</p></li>
+<li><p>Select bucket, click &#8216;create folder&#8217; on top and give folder name</p></li>
+<li><p>Add your mp4 contents in newly created folder</p></li>
+</ol>
+
+
+<h3>Create private streaming distribution in cloudfront</h3>
+
+<ol>
+<li><p>Go to cloud front console</p></li>
+<li><p>Click &#8216;create distribution&#8217; button</p></li>
+<li><p>Select &#8216;Streaming&#8217; and click &#8216;continue&#8217;</p></li>
+<li><p>Set  below configuration</p>
+
+<ul>
+<li><p>Origin Domain name</p>
+
+<p>  Choose your bucket name in the drop down</pre></p></li>
+<li><p>Restrict Bucket Access</p>
+
+<p>  Select ‘Yes’</p></li>
+<li><p>Origin Access Identity</p>
+
+<p>  Select ‘Create a new identity’  or ‘use an existing identity’ if you already created it</p></li>
+<li><p>Grant Read Permissions on Bucket</p>
+
+<p>  Select ‘Yes, update bucket policy’</p></li>
+<li><p>Restrict Viewer Access (Use signed urls)</p>
+
+<p>  Select ‘yes’</p></li>
+<li><p>Distribution State</p>
+
+<p>  Select ‘Enabled’</p></li>
+</ul>
+</li>
+<li><p>Click ‘create distribution’ and go to cloudfront home page</p></li>
+<li><p>Check the status of your newly created private distribution it shows ‘in progress’, wait until status shows as ‘deployed’, it may take longer time to get deployed</p></li>
+</ol>
+
+
+<h3>Create cloudfront key pairs</h3>
+
+<p>Note: If you already created private key and key pair id skip below steps</p>
+
+<ol>
+<li><p>Sign in to the AWS management console and go to security credential page at  <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials">https://portal.aws.amazon.com/gp/aws/securityCredentials</a>.</p></li>
+<li><p>Under ‘Access credentials’, click the ‘kay pairs’ tab</p></li>
+<li><p>Under ‘Amazon cloudFront key pairs’, click ‘create a new key pair’</p></li>
+<li><p>Save private key and store it in safe place</p></li>
+<li><p>Copy key pair id and paste it somewhere to use it later</p></li>
+</ol>
+
+
+<p>Note: These Key pair id and private key required to access the private streaming distribution</p>
+
+<h3>Access private streaming in Ruby on Rails</h3>
+
+<p>Install <a href="https://github.com/krishnasrihari/cloudfront-private">https://github.com/krishnasrihari/cloudfront-private</a> gem and configure it as described in guide</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails 3 sweepers]]></title>
+    <link href="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/"/>
+    <updated>2012-10-09T20:14:00+05:30</updated>
+    <id>http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers</id>
+    <content type="html"><![CDATA[<p>Rails 3 sweepers are same as observers but there are small changes for configuration</p>
+
+<h4>Create sweeper Directory</h4>
+
+<p>Create separate directory name &#8216;sweepers&#8217; for your application in app directory</p>
+
+<h4>Configuration</h4>
+
+<p>Add your all sweepers to autooload in config/application.rb</p>
+
+<pre><code>config.autoload_paths += %W(#{config.root}/app/sweepers)
+</code></pre>
+
+<h4>RSpec test case for sweeper</h4>
+
+<p>Write test cases for your sweepers</p>
+
+<pre><code>let(:photo) { FactoryGirl.create(:photo) }
+    let(:sweeper) { CommentSweeper.instance}
+
+    context "#after save" do
+        it "should be called" do
+            sweeper.should_receive(:after_save)
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "test")
+            end         
+        end     
+    end
+</code></pre>
+
+<p>Write test case for caching</p>
+
+<pre><code>    context "#after save cache" do
+        before do
+            Rails.cache.clear
+            ActionController::Base.perform_caching = true
+            Rails.cache.write("views/photo-#{photo.id}-comments","photo comments content")
+        end
+        after do
+            ActionController::Base.perform_caching = false
+        end
+
+        it "should be clear cached content " do         
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "update photo comments content")
+            end
+            Rails.cache.read("views/photo-#{photo.id}-comments").should be_nil
+        end     
+    end
+</code></pre>
+
+<p><a href="https://github.com/patmaddox/no-peeping-toms">https://github.com/patmaddox/no-peeping-toms</a> gem required to pass this testcase</p>
+
+<h4>Create new sweepers and bind the model to listen</h4>
+
+<pre><code>    class CommentSweeper &lt; ActionController::Caching::Sweeper
+        observe Comment # Bind to Comment model
+
+        def after_save(comment)
+            expire_cache_for(comment)
+        end
+
+        def after_destroy(comment)
+            expire_cache_for(comment)
+        end
+
+        private         
+            def expire_cache_for(comment)
+                expire_fragment("comment-#{comment.id}")
+                Rails.cache.delete("views/photo-#{comment.photo.id}-comments")                  
+            end
+    end
+</code></pre>
+
+<h4>Add it to controller</h4>
+
+<pre><code>class CommentsController &lt; ApplicationController
+    cache_sweeper :comment_sweeper, :only =&gt; :create
+
+    def create
+        ....
+    end
+end
+</code></pre>
+
+<p>Once comment#create executed your sweeper expires the fragment cache.</p>
+
+<p>Execute your sweeper test case, it will execute without any error.</p>
+]]></content>
+  </entry>
+  
+</feed>

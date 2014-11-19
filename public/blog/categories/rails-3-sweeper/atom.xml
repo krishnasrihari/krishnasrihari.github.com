@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rails 3 sweeper | Krishnaiah Sriharikota Blogs]]></title>
+  <link href="http://krishnasrihari.github.com/blog/categories/rails-3-sweeper/atom.xml" rel="self"/>
+  <link href="http://krishnasrihari.github.com/"/>
+  <updated>2014-11-19T14:24:25+05:30</updated>
+  <id>http://krishnasrihari.github.com/</id>
+  <author>
+    <name><![CDATA[Krishnaiah Sriharikota]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Rails 3 sweepers]]></title>
+    <link href="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/"/>
+    <updated>2012-10-09T20:14:00+05:30</updated>
+    <id>http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers</id>
+    <content type="html"><![CDATA[<p>Rails 3 sweepers are same as observers but there are small changes for configuration</p>
+
+<h4>Create sweeper Directory</h4>
+
+<p>Create separate directory name 'sweepers' for your application in app directory</p>
+
+<h4>Configuration</h4>
+
+<p>Add your all sweepers to autooload in config/application.rb</p>
+
+<pre><code>config.autoload_paths += %W(#{config.root}/app/sweepers)
+</code></pre>
+
+<h4>RSpec test case for sweeper</h4>
+
+<p>Write test cases for your sweepers</p>
+
+<pre><code>let(:photo) { FactoryGirl.create(:photo) }
+    let(:sweeper) { CommentSweeper.instance}
+
+    context "#after save" do
+        it "should be called" do
+            sweeper.should_receive(:after_save)
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "test")
+            end         
+        end     
+    end
+</code></pre>
+
+<p>Write test case for caching</p>
+
+<pre><code>    context "#after save cache" do
+        before do
+            Rails.cache.clear
+            ActionController::Base.perform_caching = true
+            Rails.cache.write("views/photo-#{photo.id}-comments","photo comments content")
+        end
+        after do
+            ActionController::Base.perform_caching = false
+        end
+
+        it "should be clear cached content " do         
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "update photo comments content")
+            end
+            Rails.cache.read("views/photo-#{photo.id}-comments").should be_nil
+        end     
+    end
+</code></pre>
+
+<p><a href="https://github.com/patmaddox/no-peeping-toms">https://github.com/patmaddox/no-peeping-toms</a> gem required to pass this testcase</p>
+
+<h4>Create new sweepers and bind the model to listen</h4>
+
+<pre><code>    class CommentSweeper &lt; ActionController::Caching::Sweeper
+        observe Comment # Bind to Comment model
+
+        def after_save(comment)
+            expire_cache_for(comment)
+        end
+
+        def after_destroy(comment)
+            expire_cache_for(comment)
+        end
+
+        private         
+            def expire_cache_for(comment)
+                expire_fragment("comment-#{comment.id}")
+                Rails.cache.delete("views/photo-#{comment.photo.id}-comments")                  
+            end
+    end
+</code></pre>
+
+<h4>Add it to controller</h4>
+
+<pre><code>class CommentsController &lt; ApplicationController
+    cache_sweeper :comment_sweeper, :only =&gt; :create
+
+    def create
+        ....
+    end
+end
+</code></pre>
+
+<p>Once comment#create executed your sweeper expires the fragment cache.</p>
+
+<p>Execute your sweeper test case, it will execute without any error.</p>
+]]></content>
+  </entry>
+  
+</feed>

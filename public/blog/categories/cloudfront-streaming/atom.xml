@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cloudfront streaming | Krishnaiah Sriharikota Blogs]]></title>
+  <link href="http://krishnasrihari.github.com/blog/categories/cloudfront-streaming/atom.xml" rel="self"/>
+  <link href="http://krishnasrihari.github.com/"/>
+  <updated>2014-11-19T14:24:25+05:30</updated>
+  <id>http://krishnasrihari.github.com/</id>
+  <author>
+    <name><![CDATA[Krishnaiah Sriharikota]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cloudfront private streaming with Ruby on Rails 3]]></title>
+    <link href="http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private/"/>
+    <updated>2012-10-30T17:27:00+05:30</updated>
+    <id>http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private</id>
+    <content type="html"><![CDATA[<p>Please check below steps to setup amazon cloudfront private content streaming in Ruby on Rails 3</p>
+
+<h3>Create Amazon s3 bucket to store your private contents</h3>
+
+<ol>
+<li><p>Go to Amazon Simple storage service(S3)</p></li>
+<li><p>Click 'create bucket' button, give bucket name and click 'create'</p></li>
+<li><p>Select bucket, click 'create folder' on top and give folder name</p></li>
+<li><p>Add your mp4 contents in newly created folder</p></li>
+</ol>
+
+
+<h3>Create private streaming distribution in cloudfront</h3>
+
+<ol>
+<li><p>Go to cloud front console</p></li>
+<li><p>Click 'create distribution' button</p></li>
+<li><p>Select 'Streaming' and click 'continue'</p></li>
+<li><p>Set  below configuration</p>
+
+<ul>
+<li><p>Origin Domain name</p>
+
+<p>  Choose your bucket name in the drop down</pre></p></li>
+<li><p>Restrict Bucket Access</p>
+
+<p>  Select ‘Yes’</p></li>
+<li><p>Origin Access Identity</p>
+
+<p>  Select ‘Create a new identity’  or ‘use an existing identity’ if you already created it</p></li>
+<li><p>Grant Read Permissions on Bucket</p>
+
+<p>  Select ‘Yes, update bucket policy’</p></li>
+<li><p>Restrict Viewer Access (Use signed urls)</p>
+
+<p>  Select ‘yes’</p></li>
+<li><p>Distribution State</p>
+
+<p>  Select ‘Enabled’</p></li>
+</ul>
+</li>
+<li><p>Click ‘create distribution’ and go to cloudfront home page</p></li>
+<li><p>Check the status of your newly created private distribution it shows ‘in progress’, wait until status shows as ‘deployed’, it may take longer time to get deployed</p></li>
+</ol>
+
+
+<h3>Create cloudfront key pairs</h3>
+
+<p>Note: If you already created private key and key pair id skip below steps</p>
+
+<ol>
+<li><p>Sign in to the AWS management console and go to security credential page at  <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials">https://portal.aws.amazon.com/gp/aws/securityCredentials</a>.</p></li>
+<li><p>Under ‘Access credentials’, click the ‘kay pairs’ tab</p></li>
+<li><p>Under ‘Amazon cloudFront key pairs’, click ‘create a new key pair’</p></li>
+<li><p>Save private key and store it in safe place</p></li>
+<li><p>Copy key pair id and paste it somewhere to use it later</p></li>
+</ol>
+
+
+<p>Note: These Key pair id and private key required to access the private streaming distribution</p>
+
+<h3>Access private streaming in Ruby on Rails</h3>
+
+<p>Install <a href="https://github.com/krishnasrihari/cloudfront-private">https://github.com/krishnasrihari/cloudfront-private</a> gem and configure it as described in guide</p>
+]]></content>
+  </entry>
+  
+</feed>
