@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: cloudfront streaming | Krishnaiah Sriharikota Blogs]]></title>
+  <title><![CDATA[Category: Cloudfront Streaming | Krishnaiah Sriharikota Blogs]]></title>
   <link href="http://krishnasrihari.github.com/blog/categories/cloudfront-streaming/atom.xml" rel="self"/>
   <link href="http://krishnasrihari.github.com/"/>
-  <updated>2014-11-19T14:57:51+05:30</updated>
+  <updated>2014-11-21T14:23:55+05:30</updated>
   <id>http://krishnasrihari.github.com/</id>
   <author>
     <name><![CDATA[Krishnaiah Sriharikota]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Cloudfront private streaming with Ruby on Rails 3]]></title>
+    <title type="html"><![CDATA[Cloudfront Private Streaming With Ruby on Rails 3]]></title>
     <link href="http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private/"/>
     <updated>2012-10-30T17:27:00+05:30</updated>
     <id>http://krishnasrihari.github.com/blog/2012/10/30/cloudfront-private</id>
