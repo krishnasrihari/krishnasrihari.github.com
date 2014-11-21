@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails 3 sweepers - Krishnaiah Sriharikota Blogs</title>
+  <meta name="author" content="Krishnaiah Sriharikota">
+
+  
+  <meta name="description" content="Rails 3 sweepers are same as observers but there are small changes for configuration Create sweeper Directory Create separate directory name &#8216; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Krishnaiah Sriharikota Blogs" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Krishnaiah Sriharikota Blogs</a></h1>
+  
+    <h2>Senior Ruby on Rails Developer.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:krishnasrihari.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails 3 Sweepers</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-09T20:14:00+05:30" pubdate data-updated="true">Oct 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Rails 3 sweepers are same as observers but there are small changes for configuration</p>
+
+<h4>Create sweeper Directory</h4>
+
+<p>Create separate directory name &#8216;sweepers&#8217; for your application in app directory</p>
+
+<h4>Configuration</h4>
+
+<p>Add your all sweepers to autooload in config/application.rb</p>
+
+<pre><code>config.autoload_paths += %W(#{config.root}/app/sweepers)
+</code></pre>
+
+<h4>RSpec test case for sweeper</h4>
+
+<p>Write test cases for your sweepers</p>
+
+<pre><code>let(:photo) { FactoryGirl.create(:photo) }
+    let(:sweeper) { CommentSweeper.instance}
+
+    context "#after save" do
+        it "should be called" do
+            sweeper.should_receive(:after_save)
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "test")
+            end         
+        end     
+    end
+</code></pre>
+
+<p>Write test case for caching</p>
+
+<pre><code>    context "#after save cache" do
+        before do
+            Rails.cache.clear
+            ActionController::Base.perform_caching = true
+            Rails.cache.write("views/photo-#{photo.id}-comments","photo comments content")
+        end
+        after do
+            ActionController::Base.perform_caching = false
+        end
+
+        it "should be clear cached content " do         
+            ActiveRecord::Observer.with_observers(:comment_sweeper) do          
+                photo.comments.create(:comment =&gt;  "update photo comments content")
+            end
+            Rails.cache.read("views/photo-#{photo.id}-comments").should be_nil
+        end     
+    end
+</code></pre>
+
+<p><a href="https://github.com/patmaddox/no-peeping-toms">https://github.com/patmaddox/no-peeping-toms</a> gem required to pass this testcase</p>
+
+<h4>Create new sweepers and bind the model to listen</h4>
+
+<pre><code>    class CommentSweeper &lt; ActionController::Caching::Sweeper
+        observe Comment # Bind to Comment model
+
+        def after_save(comment)
+            expire_cache_for(comment)
+        end
+
+        def after_destroy(comment)
+            expire_cache_for(comment)
+        end
+
+        private         
+            def expire_cache_for(comment)
+                expire_fragment("comment-#{comment.id}")
+                Rails.cache.delete("views/photo-#{comment.photo.id}-comments")                  
+            end
+    end
+</code></pre>
+
+<h4>Add it to controller</h4>
+
+<pre><code>class CommentsController &lt; ApplicationController
+    cache_sweeper :comment_sweeper, :only =&gt; :create
+
+    def create
+        ....
+    end
+end
+</code></pre>
+
+<p>Once comment#create executed your sweeper expires the fragment cache.</p>
+
+<p>Execute your sweeper test case, it will execute without any error.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Krishnaiah Sriharikota</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-09T20:14:00+05:30" pubdate data-updated="true">Oct 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rails-3-sweeper/'>rails 3 sweeper</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/" data-via="krishnasrihar" data-counturl="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/30/cloudfront-private/" title="Next Post: Cloudfront private streaming with Ruby on Rails 3">Cloudfront private streaming with Ruby on Rails 3 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/30/cloudfront-private/">Cloudfront private streaming with Ruby on Rails 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/09/rails-3-sweepers/">Rails 3 sweepers</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/krishnasrihari">@krishnasrihari</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'krishnasrihari',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("krishnasrihar", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/krishnasrihar" class="twitter-follow-button" data-show-count="false">Follow @krishnasrihar</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Krishnaiah Sriharikota -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
