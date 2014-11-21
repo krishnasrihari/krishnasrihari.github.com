@@ -4,7 +4,6 @@ title: "Cloudfront private streaming with Ruby on Rails 3"
 date: 2012-10-30 17:27
 comments: true
 categories: [cloudfront streaming, ruby on rails]
-external-url: https://github.com/krishnasrihari/cloudfront-private
 author: Krishnaiah Sriharikota
 ---
 
