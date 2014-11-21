@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: rails 3 sweeper | Krishnaiah Sriharikota Blogs]]></title>
+  <title><![CDATA[Category: Rails 3 Sweeper | Krishnaiah Sriharikota Blogs]]></title>
   <link href="http://krishnasrihari.github.com/blog/categories/rails-3-sweeper/atom.xml" rel="self"/>
   <link href="http://krishnasrihari.github.com/"/>
-  <updated>2014-11-19T14:57:51+05:30</updated>
+  <updated>2014-11-21T14:23:55+05:30</updated>
   <id>http://krishnasrihari.github.com/</id>
   <author>
     <name><![CDATA[Krishnaiah Sriharikota]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Rails 3 sweepers]]></title>
+    <title type="html"><![CDATA[Rails 3 Sweepers]]></title>
     <link href="http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers/"/>
     <updated>2012-10-09T20:14:00+05:30</updated>
     <id>http://krishnasrihari.github.com/blog/2012/10/09/rails-3-sweepers</id>
